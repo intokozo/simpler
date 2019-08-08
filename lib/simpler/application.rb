@@ -3,6 +3,7 @@ require 'singleton'
 require 'sequel'
 require_relative 'router'
 require_relative 'controller'
+require_relative 'controller/errors_controller'
 
 module Simpler
   class Application
@@ -30,7 +31,7 @@ module Simpler
       route = @router.route_for(env)
       controller = route.controller.new(env)
       action = route.action
-      params = route.params
+      env['simpler.params'] = route.params
 
       make_response(controller, action, params)
     end

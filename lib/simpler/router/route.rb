@@ -15,16 +15,17 @@ module Simpler
       def match?(method, path)
         path_match = path.match(@path)
 
-        return false unless @method == method && path_match
-
-        @params = path_match.named_captures.map{ |k,v| [k.to_sym, v.to_i] }.to_h
-        true
+        if @method == method && path_match
+          @params = path_match.named_captures
+        else
+          false
+        end
       end
 
       private
 
       def parse_path(path)
-        "\\A#{path.gsub(/(:\w+)/, '(?<\1>\d+)').delete(':')}\\Z"
+        "\\A#{path.gsub(/(:\w+)/, '(?<\1>\w+)').delete(':')}\\Z"
       end
 
     end

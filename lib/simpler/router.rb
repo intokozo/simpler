@@ -36,9 +36,9 @@ module Simpler
       Object.const_get("#{controller_name.capitalize}Controller")
     end
 
-    def not_found_route(method, path)
-      controller = controller_from_string('exceptions')
-      Route.new(method, path, controller, 'not_found')
+    def route_404(method, path)
+      controller = controller_from_string('errors')
+      Route.new(method, path, controller, 'error_404')
     end
   end
 end

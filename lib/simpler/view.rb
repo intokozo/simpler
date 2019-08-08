@@ -1,45 +1,28 @@
-require_relative 'view/default_renderer'
-require_relative 'view/plain_renderer'
-
 module Simpler
   class View
-    VIEW_BASE_PATH = 'app/views'.freeze
 
-    attr_reader :renderer
+    VIEW_BASE_PATH = 'app/views'.freeze
 
     def initialize(env)
       @env = env
-      @renderer = define_renderer
+      @base_render = 'html'
+      Dir["#{Simpler.root}/lib/simpler/view/**/*.rb"].each { |file| require file }
     end
 
     def render(binding)
-      @renderer.render(binding)
+      get_render.new(@env).result(binding)
     end
 
     private
 
-    def controller
-      @env['simpler.controller']
-    end
-
-    def action
-      @env['simpler.action']
-    end
-
-    def source
-      @env['simpler.render_source']
-    end
-
-    def default_path
-      [controller.name, action].join('/')
-    end
-
-    def define_renderer
-      if source && source.is_a?(Hash) && source.key?(:plain)
-        PlainRenderer.new(source[:plain])
+    def get_render
+      if @env['simpler.render_source'].is_a?(Hash)
+        type = @env['simpler.render_source'].keys.first
       else
-        DefaultRenderer.new(source || default_path)
+        type = @base_render
       end
+
+      Object.const_get("Simpler::#{type.capitalize}Render")
     end
   end
 end

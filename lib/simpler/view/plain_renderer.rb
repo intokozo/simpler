@@ -1,16 +1,17 @@
-require_relative 'renderer'
 module Simpler
-  class PlainRenderer < Renderer
-    def initialize(text)
-      @text = text
+  class PlainRender
+
+    TYPE = 'text/plain'
+
+    def initialize(env)
+      @env = env
     end
 
-    def render(binding)
-      @text
-    end
-
-    def type
-      'text/plain'
+    def result(binding)
+      {type: TYPE,
+       body: @env['simpler.render_source'].values.first,
+       template: ''}
     end
   end
 end
+
